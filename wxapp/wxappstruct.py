@@ -1,5 +1,5 @@
 from django.contrib import admin
-import os
+import os,sys
 from django.http import HttpResponse,HttpResponseRedirect,JsonResponse
 from django.shortcuts import render,render_to_response
 from django.template.context import RequestContext
@@ -10,6 +10,8 @@ import time
 # wx test app
 appid='wx0e09ec16b9a52aaf'
 appsecret='0e972dcc055cd8f5c60d3fe12dbc822e'
+
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 #appid='wxe3d8a1aee3eed9b6'
 #appsecret='1c441d00be38e3ec66cd79ff287924ee'
@@ -99,9 +101,8 @@ class wxappstruct():
             filename = nowtime  #this is UTC time,hour shoud +8 will be beijing time
             print(filename)
             #storage the file to server
-            pwd = os.getcwd()
-            path = pwd + '/static/uploads/'
-            print(path) 
+            path = PROJECT_ROOT + '/static/uploads/' #django env
+            #print(path) 
             if not os.path.exists(path):
                 os.makedirs(path)
             with open(path + filename + '.PNG','wb+') as destination:
