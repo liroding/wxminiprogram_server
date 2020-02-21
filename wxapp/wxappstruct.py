@@ -7,6 +7,11 @@ import requests
 import hashlib
 from wxapp.models import usersmessagemysqldb
 import time
+import logging
+
+#Get an instance of a loggger
+logger = logging.getLogger('django')
+
 # wx test app
 appid='wx0e09ec16b9a52aaf'
 appsecret='0e972dcc055cd8f5c60d3fe12dbc822e'
@@ -102,7 +107,10 @@ class wxappstruct():
             print(filename)
             #storage the file to server
             path = PROJECT_ROOT + '/static/uploads/' #django env
-            #print(path) 
+            logger.info('info')
+            logger.debug('debug')
+            logger.error('error')
+	    #print(path) 
             if not os.path.exists(path):
                 os.makedirs(path)
             with open(path + filename + '.PNG','wb+') as destination:
