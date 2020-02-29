@@ -13,8 +13,14 @@ import logging
 logger = logging.getLogger('django')
 
 # wx test app
-appid='wx0e09ec16b9a52aaf'
-appsecret='0e972dcc055cd8f5c60d3fe12dbc822e'
+#appid='wx0e09ec16b9a52aaf'
+#appsecret='0e972dcc055cd8f5c60d3fe12dbc822e'
+
+#this is my other app 
+appid='wxe3d8a1aee3eed9b6'
+appsecret='13dbc41accb74b6e1a14d525ddeedec9'
+
+
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -133,3 +139,67 @@ class wxappstruct():
             return HttpResponse('server cannot handle GET request !!!!')
         print('[server-log]:fileupload')
         return HttpResponse('file upload success !!!')
+    def querymysqldb(request):
+        has_authsession = 0
+        reqid = request.POST['reqid']
+        authsession = request.POST['authsession']
+        logger.info('[server-log]:'+ reqid)
+        if(authsession):
+            print(authsession)
+            all_usersmessage = usersmessagemysqldb.objects.all()
+            #to find whether db have authsession
+            i = 0
+            while i < len(all_usersmessage):
+                if authsession in all_usersmessage[i].authsession:    
+                    has_authsession = 1
+                    print('[server-log]: authsession pass !!!')
+                    #do logic demand handle
+                    if reqid == '3':
+ 
+                        name = all_usersmessage[i].name
+                        logger.info('[server-log]:name ='+ name)
+                        sex  = all_usersmessage[i].sex
+                        age  = all_usersmessage[i].age
+                        department =  all_usersmessage[i].department
+                        telephone = all_usersmessage[i].telephone
+                        print('[server-log]:get the database data !!!')
+                        return JsonResponse({'authsession':authsession,'name':name,\
+                                             'sex':sex,'age':age,'department':department, \
+                                             'telephone':telephone  \
+                                       })
+                    
+                i +=1
+            if has_authsession == 0:
+                print('[server-log]: authsession no match !!!')
+                return HttpResponse('attach authsession is error,no matching with userid(openid)')
+        return HttpResponse('attach authsession is null !!!')
+    def patientcasehandle(request):
+        logger.info('[server-log]:enter patient case handle')
+        has_authsession = 0
+        itemsdata = request.POST['itemsdata']
+        itemsdata_2 = request.POST['itemsdata_2']
+        authsession = request.POST['authsession']
+        #_list = list(itemsdata)
+        #logger.info(_list[])
+        logger.info('[server-log]: itemsdata_2= '+ itemsdata_2)
+        if(authsession):
+            print(authsession)
+            all_usersmessage = usersmessagemysqldb.objects.all()
+            #to find whether db have authsession
+            i = 0
+            while i < len(all_usersmessage):
+                if authsession in all_usersmessage[i].authsession:    
+                    has_authsession = 1
+                    print('[server-log]: authsession pass !!!')
+                    #do logic demand handle
+                    #all_usersmessage[i].case1 = itemsdata
+                    #all_usersmessage[i].case2 = itemsdata_2
+                    #all_usersmessage[i].save()
+                    print('[server-log]:update the database finish !!!')
+                    return HttpResponse('Sever has update the database !')
+                    
+                i +=1
+            if has_authsession == 0:
+                print('[server-log]: authsession no match !!!')
+                return HttpResponse('attach authsession is error,no matching with userid(openid)')
+        return HttpResponse('attach authsession is null !!!')

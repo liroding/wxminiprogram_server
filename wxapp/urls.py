@@ -7,5 +7,7 @@ urlpatterns =[
       path('onlogin',wxappstruct.onlogin),
       path('usermesgsubmit',wxappstruct.idmessagehandle),
       path('fileupload',wxappstruct.fileupload),
+      path('querymysqldb',wxappstruct.querymysqldb),
+      path('patientcasemesgsubmit',wxappstruct.patientcasehandle),
 ]
  
