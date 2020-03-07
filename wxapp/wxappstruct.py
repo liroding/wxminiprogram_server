@@ -203,3 +203,6 @@ class wxappstruct():
                 print('[server-log]: authsession no match !!!')
                 return HttpResponse('attach authsession is error,no matching with userid(openid)')
         return HttpResponse('attach authsession is null !!!')
+    def handlecovertxls(request):
+        os.system('python /home/liroding/workspace/wxminiprogram_server/wxapp/mysqlcovert_toxls.py')
+        return HttpResponse('Server has coverted mysqldb to xls !!!')
