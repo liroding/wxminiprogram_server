@@ -8,7 +8,7 @@ import hashlib
 from wxapp.models import usersmessagemysqldb
 import time
 import logging
-
+from django.core.cache import cache
 #Get an instance of a loggger
 logger = logging.getLogger('django')
 
@@ -26,12 +26,108 @@ PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 #appid='wxe3d8a1aee3eed9b6'
 #appsecret='1c441d00be38e3ec66cd79ff287924ee'
+
 url_code2Session='https://api.weixin.qq.com/sns/jscode2session?appid='+appid\
 +'&secret='+appsecret+'&js_code='
+
+
+url_accesstoken='https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='+appid+'&secret='+appsecret
+
+#sever should to get access token value on time (2 hours)
+def get_accesstoken():
+    print('[server-log]: to get access token value')
+    res = requests.get(url_accesstoken)
+    print(url_accesstoken)
+    _dict = res.json()
+    access_token = _dict['access_token'] #get session_key
+    print(access_token)
+    cache.set('access_token',access_token)
+
+def checkauthsession(authsessioncode):
+        print('authsession = '+ authsessioncode)
+        has_authsession = 0
+        authsession = authsessioncode
+        if(authsession):
+            print(authsession)
+            all_usersmessage = usersmessagemysqldb.objects.all()
+            #to find whether db have authsession
+            i = 0
+            while i < len(all_usersmessage):
+                if authsession in all_usersmessage[i].authsession:    
+                    has_authsession = 1
+                    print('[server-log]: authsession match !!!')
+                    return 1   #match 
+                i +=1
+            if has_authsession == 0:
+                print('[server-log]: authsession no match !!!')
+                return 0   #no match
 class wxappstruct():
+    
     def testfunc(request):
         print('[server-log]:hello world')
-        return HttpResponse("Hello World")
+        #checkauthsession('11222')
+        print(cache.get('access_token'))
+        token = cache.get('access_token')
+        #return HttpResponse(token)
+        
+       	if request.method == 'POST':
+           access_token = cache.get('access_token')
+
+           authsession = request.POST['authsession']
+           rflag = checkauthsession(authsession)
+           
+           template_id = 'yknmtxHzvfU4rE84aa9siy1iDq12eck3CEYCoQF4Vwg'
+           push_data = {
+            "keyword1": {
+                "value": 1233
+            },
+            "keyword2": {
+                "value": nihd
+            },
+            "keyword3": {
+                "value": "{:.2f}".format(float(obj.total_price))
+            },
+        }
+
+        if access_token:
+            # 如果存在accesstoken
+            payload = {
+                'touser': req_data.get('openid', ''), #这里为用户的openid
+                'template_id': template_id, #模板id
+                'form_id': req_data.get('form_id', ''), #表单id或者prepay_id
+                'data': push_data #模板填充的数据
+            }
+
+            response = requests.post(f'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token={access_token}',
+                          json=payload)
+
+            #直接返回res结果
+            return JsonResponse(response.json())
+        else:
+            return JsonResponse({
+                'err': 'access_token missing'
+            })   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     def onlogin(request):
         has_user = 0
         wx_code = request.GET['code']
@@ -204,5 +300,11 @@ class wxappstruct():
                 return HttpResponse('attach authsession is error,no matching with userid(openid)')
         return HttpResponse('attach authsession is null !!!')
     def handlecovertxls(request):
-        os.system('python /home/liroding/workspace/wxminiprogram_server/wxapp/mysqlcovert_toxls.py')
-        return HttpResponse('Server has coverted mysqldb to xls !!!')
+        authsession = request.POST['authsession']
+        rflag = checkauthsession(authsession)
+        if rflag == 1:
+             os.system('python /home/liroding/workspace/wxminiprogram_server/wxapp/mysqlcovert_toxls.py')
+             return HttpResponse('Server has coverted mysqldb to xls !!!')
+        else:
+             
+             return HttpResponse('Authsession no match')
