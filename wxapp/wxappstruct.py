@@ -20,7 +20,7 @@ logger = logging.getLogger('django')
 appid='wxe3d8a1aee3eed9b6'
 appsecret='13dbc41accb74b6e1a14d525ddeedec9'
 
-
+WEIXIN_TOKEN = 'ding'
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -64,69 +64,106 @@ def checkauthsession(authsessioncode):
 class wxappstruct():
     
     def testfunc(request):
+        find_openid = 0
+        openid = 0
+       # form_id = request.POST['form_id']
         print('[server-log]:hello world')
         #checkauthsession('11222')
         print(cache.get('access_token'))
         token = cache.get('access_token')
         #return HttpResponse(token)
-        
-       	if request.method == 'POST':
-           access_token = cache.get('access_token')
-
+       
+ 
+        if request.method == 'POST':
            authsession = request.POST['authsession']
+           print('<1>')
+           print(authsession)
            rflag = checkauthsession(authsession)
-           
-           template_id = 'yknmtxHzvfU4rE84aa9siy1iDq12eck3CEYCoQF4Vwg'
-           push_data = {
-            "keyword1": {
-                "value": 1233
-            },
-            "keyword2": {
-                "value": nihd
-            },
-            "keyword3": {
-                "value": "{:.2f}".format(float(obj.total_price))
-            },
-        }
+      
+           if rflag == 0:
+                return HttpResponse('Authsession no match')
+           else:
+                #start to get openid in mysqldb
+                all_usersmessage = usersmessagemysqldb.objects.all()
+                i = 0
+                while i < len(all_usersmessage):
+                    if authsession in all_usersmessage[i].authsession:    
+                            find_openid = 1
+                            openid = all_usersmessage[i].openid
+                            print('[server-log]: openid =' + openid)
+                            break
+                    i +=1
+                if find_openid == 0:
+                    print('[server-log]: openid no match !!!')
+                    return HttpResponse('Connot find openid')
+                
+                access_token = cache.get('access_token')
+                template_id = 'yknmtxHzvfU4rE84aa9si5LuV0gAW_7KGzEXz7FQgN0'
 
-        if access_token:
-            # 如果存在accesstoken
-            payload = {
-                'touser': req_data.get('openid', ''), #这里为用户的openid
-                'template_id': template_id, #模板id
-                'form_id': req_data.get('form_id', ''), #表单id或者prepay_id
-                'data': push_data #模板填充的数据
-            }
+                push_data = {
+                        "thing1": {
+                                    "value": 'Love'
+                        },
+                        "name2": {
+                                    "value": 'chunxiaoxu'
+                        },
+                        "date4": {
+                                    "value": '2020-03-25'
+                        },
+                        "phone_number3": {
+                                    "value": '1314'
+                        },
+                       }
 
-            response = requests.post(f'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send?access_token={access_token}',
-                          json=payload)
+                if access_token:
+                   print('[Server-log] <1>')
+                   print(access_token)
+                   print('[Server-log] <2>')
+                   #start to get openid in mysqldb
+                   # 如果存在accesstoken
+                   payload = {
+                               'touser': openid, #这里为用户的openid
+                               'template_id': template_id, #模板id
+            #                   'form_id': form_id, #表单id或者prepay_id
+                               'data': push_data #模板填充的数据
+                   }
 
-            #直接返回res结果
-            return JsonResponse(response.json())
+
+                   url_sendtemplate = 'https://api.weixin.qq.com/cgi-bin/message/subscribe/send?access_token='+access_token
+                   print('[Server-log]:url_sendtemplate= '+ url_sendtemplate)
+                   response = requests.post(url_sendtemplate,json=payload)
+                   print(response)
+                   print(response.json())
+                   #直接返回res结果
+                   #return JsonResponse(response.json())
+                   return HttpResponse('1111111')
+                else:
+                   '''
+                   return JsonResponse({
+                         'err': 'access_token missing'
+                })   
+                   '''
+
+                   return HttpResponse('222')
+
+    def wxcheckSignature(request):
+        
+        signature = request.GET['signature']
+        timestamp = request.GET['timestamp']
+        nonce = request.GET['nonce']
+        echostr = request.GET['echostr']
+        token = WEIXIN_TOKEN
+        tmp_list = [timestamp,nonce,token]
+        tmp_list.sort()
+        tmp_str = "%s%s%s" % tuple(tmp_list)
+        sha = hashlib.sha1()
+        sha.update(tmp_str.encode())
+        tmp_str = sha.hexdigest()
+        print('[server-log] signature:%s' % signature)
+        if tmp_str == signature:
+             return HttpResponse(echostr)
         else:
-            return JsonResponse({
-                'err': 'access_token missing'
-            })   
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+             return HttpResponse("weixin index")
 
     def onlogin(request):
         has_user = 0
