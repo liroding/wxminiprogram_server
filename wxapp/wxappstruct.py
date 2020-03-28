@@ -63,21 +63,21 @@ def checkauthsession(authsessioncode):
                 return 0   #no match
 class wxappstruct():
     
+    
     def testfunc(request):
+        print('[server-log]: hello world !!!')
+        return HttpResponse('hello world')
+    def wxsubscribes(request):
         find_openid = 0
         openid = 0
-       # form_id = request.POST['form_id']
-        print('[server-log]:hello world')
-        #checkauthsession('11222')
+        
         print(cache.get('access_token'))
         token = cache.get('access_token')
-        #return HttpResponse(token)
        
- 
         if request.method == 'POST':
            authsession = request.POST['authsession']
-           print('<1>')
-           print(authsession)
+           subscribeid = request.POST['subscribeid']
+           print(subscribeid)
            rflag = checkauthsession(authsession)
       
            if rflag == 0:
@@ -90,6 +90,7 @@ class wxappstruct():
                     if authsession in all_usersmessage[i].authsession:    
                             find_openid = 1
                             openid = all_usersmessage[i].openid
+                            name = all_usersmessage[i].name
                             print('[server-log]: openid =' + openid)
                             break
                     i +=1
@@ -98,22 +99,34 @@ class wxappstruct():
                     return HttpResponse('Connot find openid')
                 
                 access_token = cache.get('access_token')
-                template_id = 'yknmtxHzvfU4rE84aa9si5LuV0gAW_7KGzEXz7FQgN0'
-
-                push_data = {
+                nowtime = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime()) 
+                if subscribeid == '1':
+                    print('nihaonnnnn')
+                    template_id = 'yknmtxHzvfU4rE84aa9si5LuV0gAW_7KGzEXz7FQgN0'
+                    push_data = {
+                         "thing1": {
+                                   "value": 'Love'
+                         },
+                         "name2": {
+                                   "value": 'chunxiaoxu'
+                         },
+                         "date4": {
+                                   "value": nowtime
+                         },
+                         "phone_number3": {
+                                   "value": '1314'
+                         },
+                      }
+                elif subscribeid == '2':
+                    template_id = '8qZXmYaPl9gJsUFQmhtDb73gvkP-lKFivLyroyTpeyI'
+                    push_data = {
                         "thing1": {
-                                    "value": 'Love'
+                                  "value": name
                         },
-                        "name2": {
-                                    "value": 'chunxiaoxu'
+                        "time3": {
+                                  "value": nowtime
                         },
-                        "date4": {
-                                    "value": '2020-03-25'
-                        },
-                        "phone_number3": {
-                                    "value": '1314'
-                        },
-                       }
+                      }
 
                 if access_token:
                    print('[Server-log] <1>')

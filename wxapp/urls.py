@@ -4,6 +4,7 @@ urlpatterns =[
 
       ################## [testfunc] ####################
       path('helloworld',wxappstruct.testfunc),
+      path('wxsubscribes',wxappstruct.wxsubscribes),
       path('onlogin',wxappstruct.onlogin),
       path('usermesgsubmit',wxappstruct.idmessagehandle),
       path('fileupload',wxappstruct.fileupload),
