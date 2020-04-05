@@ -12,6 +12,8 @@ from django.core.cache import cache
 #Get an instance of a loggger
 logger = logging.getLogger('django')
 
+#error:ascii codec can't encode characters
+
 # wx test app
 #appid='wx0e09ec16b9a52aaf'
 #appsecret='0e972dcc055cd8f5c60d3fe12dbc822e'
@@ -48,7 +50,7 @@ def checkauthsession(authsessioncode):
         has_authsession = 0
         authsession = authsessioncode
         if(authsession):
-            print(authsession)
+            #print(authsession)
             all_usersmessage = usersmessagemysqldb.objects.all()
             #to find whether db have authsession
             i = 0
@@ -61,6 +63,14 @@ def checkauthsession(authsessioncode):
             if has_authsession == 0:
                 print('[server-log]: authsession no match !!!')
                 return 0   #no match
+def getdbarg(authsessioncode,argid): #1:nickname
+        all_usersmessage = usersmessagemysqldb.objects.all()
+        authsession = authsessioncode
+        i = 0
+        while i < len(all_usersmessage):
+                if authsession in all_usersmessage[i].authsession:   
+                     if argid == 1:
+                         return all_usersmessage[i].nickname
 class wxappstruct():
     
     
@@ -248,7 +258,7 @@ class wxappstruct():
                 print('[server-log]: authsession no match !!!')
                 return HttpResponse('attach authsession is error,no matching with userid(openid)')
         return HttpResponse('attach authsession is null !!!')
-
+    ''' 
     def fileupload(request):
         if request.method == "POST":
             image_file = request.FILES.get('file')
@@ -280,6 +290,64 @@ class wxappstruct():
                        print('[server-log]:storage the upload picture !!')
                        return HttpResponse('Sever has update the database !')
                     i +=1
+        else:
+            return HttpResponse('server cannot handle GET request !!!!')
+        print('[server-log]:fileupload')
+        return HttpResponse('file upload success !!!')
+    '''
+    def fileupload(request):
+        if request.method == "POST":
+            
+            authsession = request.POST['authsession']
+            rflag = checkauthsession(authsession)
+      
+            if rflag == 0:
+                return HttpResponse('Authsession no match')
+            else:
+                uploadid = request.POST['uploadid']
+                print('[server-log]: upload img id =' + uploadid)
+                if   uploadid == '3':
+                     image_file = request.FILES.get('file')
+                     nowtime = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime()) 
+                     filename = nowtime  #this is UTC time,hour shoud +8 will be beijing time
+                     #filename = nickname + '_' +nowtime  #this is UTC time,hour shoud +8 will be beijing time
+                     print(filename)
+                     print(sys.getdefaultencoding())
+                     #storage case imgs to server
+                     nickname = getdbarg(authsession,1) #1:nickname
+                     path = PROJECT_ROOT + '/static/uploads/caseimgs/' + nickname + '/' #django env
+                     logger.info('[server-log]: upload file path =' + path)
+                     
+                     if not os.path.exists(path):
+                          os.makedirs(path)
+                     with open(path + filename + '.PNG','wb+') as destination:
+                          for chunk in image_file.chunks():
+                               destination.write(chunk)
+            #         logger.debug('debug')
+            #         logger.error('error')
+
+   #             elif uploadid == '4':
+
+            ''' 
+            if not os.path.exists(path):
+                os.makedirs(path)
+            with open(path + filename + '.PNG','wb+') as destination:
+                for chunk in image_file.chunks():
+                    destination.write(chunk)
+            
+                all_usersmessage = usersmessagemysqldb.objects.all()
+                #to find whether db have authsession
+                i = 0
+                while i < len(all_usersmessage):
+                    #print('<1>' + authsession)
+                    #print('<2>' + all_usersmessage[i].authsession)
+                    if authsession == all_usersmessage[i].authsession:    
+                       all_usersmessage[i].caseimg = filename + '.PNG'
+                       all_usersmessage[i].save()
+                       print('[server-log]:storage the upload picture !!')
+                       return HttpResponse('Sever has update the database !')
+                    i +=1
+            '''
         else:
             return HttpResponse('server cannot handle GET request !!!!')
         print('[server-log]:fileupload')
