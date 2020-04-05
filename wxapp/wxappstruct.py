@@ -63,6 +63,8 @@ def checkauthsession(authsessioncode):
             if has_authsession == 0:
                 print('[server-log]: authsession no match !!!')
                 return 0   #no match
+        else:
+            return HttpResponse('attach authsession is null !!!')
 def getdbarg(authsessioncode,argid): #1:nickname
         all_usersmessage = usersmessagemysqldb.objects.all()
         authsession = authsessioncode
@@ -389,25 +391,34 @@ class wxappstruct():
     def patientcasehandle(request):
         logger.info('[server-log]:enter patient case handle')
         has_authsession = 0
-        itemsdata = request.POST['itemsdata_1']
+        itemsdata_1 = request.POST['itemsdata_1']
         itemsdata_2 = request.POST['itemsdata_2']
+        itemsdata_3 = request.POST['itemsdata_3']
         authsession = request.POST['authsession']
-        #_list = list(itemsdata)
-        #logger.info(_list[])
+        _list = list(itemsdata_1)
+        logger.info(_list)
+        logger.info('[server-log]: itemsdata_1= '+ itemsdata_1)
         logger.info('[server-log]: itemsdata_2= '+ itemsdata_2)
-        if(authsession):
-            print(authsession)
+        logger.info('[server-log]: itemsdata_3= '+ itemsdata_3)
+       
+        
+        rflag = checkauthsession(authsession)
+      
+        if rflag == 0:
+            return HttpResponse('Authsession no match')
+        else:
+
             all_usersmessage = usersmessagemysqldb.objects.all()
             #to find whether db have authsession
             i = 0
             while i < len(all_usersmessage):
                 if authsession in all_usersmessage[i].authsession:    
                     has_authsession = 1
-                    print('[server-log]: authsession pass !!!')
                     #do logic demand handle
-                    #all_usersmessage[i].case1 = itemsdata
-                    #all_usersmessage[i].case2 = itemsdata_2
-                    #all_usersmessage[i].save()
+                    all_usersmessage[i].case1 = itemsdata_1
+                    all_usersmessage[i].case2 = itemsdata_2
+                    all_usersmessage[i].case3 = itemsdata_3
+                    all_usersmessage[i].save()
                     print('[server-log]:update the database finish !!!')
                     return HttpResponse('Sever has update the database !')
                     
@@ -415,7 +426,6 @@ class wxappstruct():
             if has_authsession == 0:
                 print('[server-log]: authsession no match !!!')
                 return HttpResponse('attach authsession is error,no matching with userid(openid)')
-        return HttpResponse('attach authsession is null !!!')
     def handlecovertxls(request):
         authsession = request.POST['authsession']
         rflag = checkauthsession(authsession)
