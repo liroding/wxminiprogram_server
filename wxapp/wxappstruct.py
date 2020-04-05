@@ -101,7 +101,6 @@ class wxappstruct():
                 access_token = cache.get('access_token')
                 nowtime = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime()) 
                 if subscribeid == '1':
-                    print('nihaonnnnn')
                     template_id = 'yknmtxHzvfU4rE84aa9si5LuV0gAW_7KGzEXz7FQgN0'
                     push_data = {
                          "thing1": {
@@ -137,7 +136,7 @@ class wxappstruct():
                    payload = {
                                'touser': openid, #这里为用户的openid
                                'template_id': template_id, #模板id
-            #                   'form_id': form_id, #表单id或者prepay_id
+                               'page': "pages/Preview/Preview",
                                'data': push_data #模板填充的数据
                    }
 
