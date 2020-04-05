@@ -307,10 +307,10 @@ class wxappstruct():
                 uploadid = request.POST['uploadid']
                 print('[server-log]: upload img id =' + uploadid)
                 if   uploadid == '3':
+                     casepicid = request.POST['casepicid']
                      image_file = request.FILES.get('file')
                      nowtime = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime()) 
-                     filename = nowtime  #this is UTC time,hour shoud +8 will be beijing time
-                     #filename = nickname + '_' +nowtime  #this is UTC time,hour shoud +8 will be beijing time
+                     filename = nowtime + '_' + casepicid #this is UTC time,hour shoud +8 will be beijing time
                      print(filename)
                      print(sys.getdefaultencoding())
                      #storage case imgs to server
@@ -389,7 +389,7 @@ class wxappstruct():
     def patientcasehandle(request):
         logger.info('[server-log]:enter patient case handle')
         has_authsession = 0
-        itemsdata = request.POST['itemsdata']
+        itemsdata = request.POST['itemsdata_1']
         itemsdata_2 = request.POST['itemsdata_2']
         authsession = request.POST['authsession']
         #_list = list(itemsdata)
