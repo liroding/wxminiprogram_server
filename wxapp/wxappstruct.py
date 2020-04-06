@@ -34,8 +34,13 @@ url_code2Session='https://api.weixin.qq.com/sns/jscode2session?appid='+appid\
 
 
 url_accesstoken='https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid='+appid+'&secret='+appsecret
-
 #sever should to get access token value on time (2 hours)
+
+#############################################
+case1_index = ['1-1','1-2','1-3','1-4']
+case2_index = ['2-1','2-2','2-3','2-4']
+case3_index = ['3-1','3-2','3-3','3-4','3-5','3-6','3-7','3-8','3-9','3-10','3-11']
+#############################################
 def get_accesstoken():
     print('[server-log]: to get access token value')
     res = requests.get(url_accesstoken)
@@ -355,21 +360,25 @@ class wxappstruct():
         print('[server-log]:fileupload')
         return HttpResponse('file upload success !!!')
     def querymysqldb(request):
-        has_authsession = 0
-        reqid = request.POST['reqid']
+
         authsession = request.POST['authsession']
-        logger.info('[server-log]:'+ reqid)
-        if(authsession):
-            print(authsession)
-            all_usersmessage = usersmessagemysqldb.objects.all()
-            #to find whether db have authsession
-            i = 0
-            while i < len(all_usersmessage):
-                if authsession in all_usersmessage[i].authsession:    
-                    has_authsession = 1
-                    print('[server-log]: authsession pass !!!')
-                    #do logic demand handle
-                    if reqid == '3':
+        rflag = checkauthsession(authsession)
+      
+        if rflag == 0:
+             return HttpResponse('Authsession no match')
+        else:
+             reqid = request.POST['reqid']
+             logger.info('[server-log]:'+ reqid)
+             if reqid == '5':  #get all message from db
+                has_authsession = 0
+                all_usersmessage = usersmessagemysqldb.objects.all()
+                #to find whether db have authsession
+                i = 0
+                while i < len(all_usersmessage):
+                    if authsession in all_usersmessage[i].authsession:    
+                        has_authsession = 1
+                        print('[server-log]: authsession pass !!!')
+                        #do logic demand handle
  
                         name = all_usersmessage[i].name
                         logger.info('[server-log]:name ='+ name)
@@ -377,17 +386,53 @@ class wxappstruct():
                         age  = all_usersmessage[i].age
                         department =  all_usersmessage[i].department
                         telephone = all_usersmessage[i].telephone
+                        #case handle
+                        case1 =  all_usersmessage[i].case1
+                        case2 =  all_usersmessage[i].case2
+                        case3 =  all_usersmessage[i].case3
+
+                        _list1 = case1.strip(',').split(',')
+                        _list2 = case2.strip(',').split(',')
+                        _list3 = case3.strip(',').split(',')
+                        print('[server-log]:case1_list :',_list1)
+                        print('[server-log]:case2_list :',_list2)
+                        print('[server-log]:case3_list :',_list3)
+                        ###########################################
+                        _retcase1list = [0 for x in range(0,4)]
+                        _retcase2list = [0 for x in range(0,4)]
+                        _retcase3list = [0 for x in range(0,11)]
+                        ##########################################
+                        #case1
+                        for i in range(len(_list1)):
+                            for j in range(len(case1_index)):
+                                if _list1[i] == case1_index[j]:
+                                   _retcase1list[j] = 1
+                        #case2
+                        for i in range(len(_list2)):
+                            for j in range(len(case2_index)):
+                                if _list2[i] == case2_index[j]:
+                                   _retcase2list[j] = 1
+                        #case3
+                        for i in range(len(_list3)):
+                            for j in range(len(case3_index)):
+                                if _list3[i] == case3_index[j]:
+                                   _retcase3list[j] = 1
+                        print('tmp_case1index 1 conver = ',_retcase1list)
+                        print('tmp_case1index 2 conver = ',_retcase2list)
+                        print('tmp_case1index 3 conver = ',_retcase3list)
                         print('[server-log]:get the database data !!!')
                         return JsonResponse({'authsession':authsession,'name':name,\
                                              'sex':sex,'age':age,'department':department, \
-                                             'telephone':telephone  \
+                                             'telephone':telephone,  \
+                                             'case1':_retcase1list,  \
+                                             'case2':_retcase2list,  \
+                                             'case3':_retcase3list  \
                                        })
                     
-                i +=1
-            if has_authsession == 0:
-                print('[server-log]: authsession no match !!!')
-                return HttpResponse('attach authsession is error,no matching with userid(openid)')
-        return HttpResponse('attach authsession is null !!!')
+                i += 1
+                if has_authsession == 0:
+                   print('[server-log]: authsession no match !!!')
+                   return HttpResponse('attach authsession is error,no matching with userid(openid)')
     def patientcasehandle(request):
         logger.info('[server-log]:enter patient case handle')
         has_authsession = 0
@@ -395,8 +440,12 @@ class wxappstruct():
         itemsdata_2 = request.POST['itemsdata_2']
         itemsdata_3 = request.POST['itemsdata_3']
         authsession = request.POST['authsession']
-        _list = list(itemsdata_1)
-        logger.info(_list)
+        _list1 = itemsdata_1.strip(',').split(',')
+        _list2 = itemsdata_2.strip(',').split(',')
+        _list3 = itemsdata_3.strip(',').split(',')
+        #logger.info('[server-log]: _list1= ' + _list1)
+        #logger.info('[server-log]: _list2= ' + _list2)
+        #logger.info('[server-log]: _list3= ' + _list3)
         logger.info('[server-log]: itemsdata_1= '+ itemsdata_1)
         logger.info('[server-log]: itemsdata_2= '+ itemsdata_2)
         logger.info('[server-log]: itemsdata_3= '+ itemsdata_3)
