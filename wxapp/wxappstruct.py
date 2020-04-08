@@ -25,6 +25,7 @@ appsecret='13dbc41accb74b6e1a14d525ddeedec9'
 WEIXIN_TOKEN = 'ding'
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SERVER_URL   = 'https://dingyinglai.site'
 
 #appid='wxe3d8a1aee3eed9b6'
 #appsecret='1c441d00be38e3ec66cd79ff287924ee'
@@ -78,6 +79,13 @@ def getdbarg(authsessioncode,argid): #1:nickname
                 if authsession in all_usersmessage[i].authsession:   
                      if argid == 1:
                          return all_usersmessage[i].nickname
+def listfilename(home_dir,serverurl): #this function find the file under dir
+        filelist = []
+        for root,dirs,files in os.walk(home_dir):
+               for file in files:
+                   if os.path.splitext(file)[1] == '.PNG':
+                       filelist.append(os.path.join(serverurl,file))
+        return filelist 
 class wxappstruct():
     
     
@@ -302,6 +310,7 @@ class wxappstruct():
         print('[server-log]:fileupload')
         return HttpResponse('file upload success !!!')
     '''
+         
     def fileupload(request):
         if request.method == "POST":
             
@@ -360,7 +369,13 @@ class wxappstruct():
         print('[server-log]:fileupload')
         return HttpResponse('file upload success !!!')
     def querymysqldb(request):
+       
 
+         
+        homepath = PROJECT_ROOT + '/static/uploads/caseimgs/' + 'ding-丁' + '/'
+        serverurlpath = SERVER_URL + '/static/uploads/caseimgs/' + 'ding-丁' + '/'
+        caseimglist = listfilename(homepath,serverurlpath)
+  
         authsession = request.POST['authsession']
         rflag = checkauthsession(authsession)
       
@@ -426,7 +441,8 @@ class wxappstruct():
                                              'telephone':telephone,  \
                                              'case1':_retcase1list,  \
                                              'case2':_retcase2list,  \
-                                             'case3':_retcase3list  \
+                                             'case3':_retcase3list,  \
+                                             'caseimglist':caseimglist \
                                        })
                     
                 i += 1
