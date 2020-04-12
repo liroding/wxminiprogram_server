@@ -264,6 +264,9 @@ class wxappstruct():
                     all_usersmessage[i].age = age
                     all_usersmessage[i].department = department
                     all_usersmessage[i].telephone = telephone
+                    all_usersmessage[i].telephone = telephone
+                    print('[server-log]:status %d '% int(all_usersmessage[i].status) )
+                    all_usersmessage[i].status = int(all_usersmessage[i].status) | 0x1 
                     all_usersmessage[i].save()
                     print('[server-log]:update the database finish !!!')
                     return HttpResponse('Sever has update the database !')
@@ -384,7 +387,7 @@ class wxappstruct():
         else:
              reqid = request.POST['reqid']
              logger.info('[server-log]:'+ reqid)
-             if reqid == '5':  #get all message from db
+             if reqid == '5':  #doctor get all message from db
                 has_authsession = 0
                 all_usersmessage = usersmessagemysqldb.objects.all()
                 #to find whether db have authsession
@@ -393,8 +396,19 @@ class wxappstruct():
                     if authsession in all_usersmessage[i].authsession:    
                         has_authsession = 1
                         print('[server-log]: authsession pass !!!')
+                        break
+                    i += 1
+                if has_authsession == 0:
+                   print('[server-log]: authsession no match !!!')
+                   return HttpResponse('attach authsession is error,no matching with userid(openid)')
+
                         #do logic demand handle
- 
+                i = 0 
+                while i < len(all_usersmessage):
+                   status = int(all_usersmessage[i].status)       #bit3:doctor handle flag
+                   status = status & 0x4
+                   if status == 0x0:     
+                        all_usersmessage[i].status = int(all_usersmessage[i].status) | 0x4 #doctor haved handle this casedb
                         name = all_usersmessage[i].name
                         logger.info('[server-log]:name ='+ name)
                         sex  = all_usersmessage[i].sex
@@ -405,6 +419,7 @@ class wxappstruct():
                         case1 =  all_usersmessage[i].case1
                         case2 =  all_usersmessage[i].case2
                         case3 =  all_usersmessage[i].case3
+                        all_usersmessage[i].save()
 
                         _list1 = case1.strip(',').split(',')
                         _list2 = case2.strip(',').split(',')
@@ -444,11 +459,10 @@ class wxappstruct():
                                              'case3':_retcase3list,  \
                                              'caseimglist':caseimglist \
                                        })
-                    
-                i += 1
-                if has_authsession == 0:
-                   print('[server-log]: authsession no match !!!')
-                   return HttpResponse('attach authsession is error,no matching with userid(openid)')
+                   i = i + 1
+                
+                print('[server-log]: this is last handle dbcase !!!')
+                return HttpResponse('no other match dbcase')
     def patientcasehandle(request):
         logger.info('[server-log]:enter patient case handle')
         has_authsession = 0
@@ -483,6 +497,7 @@ class wxappstruct():
                     all_usersmessage[i].case1 = itemsdata_1
                     all_usersmessage[i].case2 = itemsdata_2
                     all_usersmessage[i].case3 = itemsdata_3
+                    all_usersmessage[i].status = int(all_usersmessage[i].status) | 0x2 
                     all_usersmessage[i].save()
                     print('[server-log]:update the database finish !!!')
                     return HttpResponse('Sever has update the database !')
