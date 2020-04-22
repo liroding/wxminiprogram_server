@@ -79,6 +79,7 @@ def getdbarg(authsessioncode,argid): #1:nickname
                 if authsession in all_usersmessage[i].authsession:   
                      if argid == 1:
                          return all_usersmessage[i].nickname
+                i +=1
 def listfilename(home_dir,serverurl): #this function find the file under dir
         filelist = []
         for root,dirs,files in os.walk(home_dir):
@@ -334,8 +335,10 @@ class wxappstruct():
                      print(sys.getdefaultencoding())
                      #storage case imgs to server
                      nickname = getdbarg(authsession,1) #1:nickname
+                     print('<1> nickname=',nickname)
                      path = PROJECT_ROOT + '/static/uploads/caseimgs/' + nickname + '/' #django env
                      logger.info('[server-log]: upload file path =' + path)
+                     print('<2> path=',path)
                      
                      if not os.path.exists(path):
                           os.makedirs(path)
@@ -374,11 +377,11 @@ class wxappstruct():
     def querymysqldb(request):
        
 
-         
+        ''' 
         homepath = PROJECT_ROOT + '/static/uploads/caseimgs/' + 'ding-丁' + '/'
         serverurlpath = SERVER_URL + '/static/uploads/caseimgs/' + 'ding-丁' + '/'
         caseimglist = listfilename(homepath,serverurlpath)
-  
+        '''
         authsession = request.POST['authsession']
         rflag = checkauthsession(authsession)
       
@@ -432,6 +435,12 @@ class wxappstruct():
                         _retcase2list = [0 for x in range(0,4)]
                         _retcase3list = [0 for x in range(0,11)]
                         ##########################################
+                        
+                        print('[server-debug]: the nickname %s' % (all_usersmessage[i].nickname))
+                        homepath = PROJECT_ROOT + '/static/uploads/caseimgs/' + all_usersmessage[i].nickname + '/'
+                        serverurlpath = SERVER_URL + '/static/uploads/caseimgs/' + all_usersmessage[i].nickname + '/'
+                        caseimglist = listfilename(homepath,serverurlpath)
+                        print('homepath=',homepath)
                         #case1
                         for i in range(len(_list1)):
                             for j in range(len(case1_index)):
