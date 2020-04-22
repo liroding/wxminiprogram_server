@@ -27,7 +27,7 @@ class usersmessagemysqldb(models.Model):
     case3 = models.CharField(max_length = 50,default='')
     case4 = models.CharField(max_length = 50,default='')
     caseimg = models.CharField(max_length = 50,default='')
-    status = models.CharField(max_length = 10,default = '0')
+    status = models.CharField(max_length = 10,default='0')
  #   status = models.IntegerField(default = '0')
     # def __str__(self):
     #    return 'username:'+ self.username
