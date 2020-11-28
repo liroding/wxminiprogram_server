@@ -1,0 +1,225 @@
+2020-09-29 00:27:24,323 [Dummy-3:140024246888192] [django.template:878] [base:_resolve_lookup] [DEBUG]- Exception while resolving variable 'name' in template 'unknown'.
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/core/handlers/exception.py", line 35, in inner
+    response = get_response(request)
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/core/handlers/base.py", line 113, in _get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/urls/resolvers.py", line 523, in resolve
+    raise Resolver404({'tried': tried, 'path': new_path})
+django.urls.exceptions.Resolver404: {'tried': [[<URLResolver <URLPattern list> (admin:admin) 'admin/'>], [<URLResolver <module 'wxapp.urls' from '/home/liroding/workspace/wxminiprogram_server/wxapp/urls.py'> (None:None) 'wxapp/'>]], 'path': ''}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 835, in _resolve_lookup
+    current = current[bit]
+TypeError: 'URLResolver' object is not subscriptable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 843, in _resolve_lookup
+    current = getattr(current, bit)
+AttributeError: 'URLResolver' object has no attribute 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 849, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 856, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [name] in <URLResolver <URLPattern list> (admin:admin) 'admin/'>
+2020-09-29 00:27:24,325 [Dummy-3:140024246888192] [django.template:878] [base:_resolve_lookup] [DEBUG]- Exception while resolving variable 'name' in template 'unknown'.
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/core/handlers/exception.py", line 35, in inner
+    response = get_response(request)
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/core/handlers/base.py", line 113, in _get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/urls/resolvers.py", line 523, in resolve
+    raise Resolver404({'tried': tried, 'path': new_path})
+django.urls.exceptions.Resolver404: {'tried': [[<URLResolver <URLPattern list> (admin:admin) 'admin/'>], [<URLResolver <module 'wxapp.urls' from '/home/liroding/workspace/wxminiprogram_server/wxapp/urls.py'> (None:None) 'wxapp/'>]], 'path': ''}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 835, in _resolve_lookup
+    current = current[bit]
+TypeError: 'URLResolver' object is not subscriptable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 843, in _resolve_lookup
+    current = getattr(current, bit)
+AttributeError: 'URLResolver' object has no attribute 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 849, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 856, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [name] in <URLResolver <module 'wxapp.urls' from '/home/liroding/workspace/wxminiprogram_server/wxapp/urls.py'> (None:None) 'wxapp/'>
+2020-09-29 01:00:01,415 [MainThread:140688077575936] [django.db.backends:111] [utils:execute] [DEBUG]- (0.000) SELECT @@SQL_AUTO_IS_NULL; args=None
+2020-09-29 01:00:01,415 [MainThread:140688077575936] [django.db.backends:111] [utils:execute] [DEBUG]- (0.000) SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED; args=None
+2020-09-29 01:00:01,415 [MainThread:140688077575936] [django.db.backends:111] [utils:execute] [DEBUG]- (0.000) SELECT VERSION(); args=None
+2020-09-29 01:18:55,935 [Dummy-4:140024500209408] [django.template:878] [base:_resolve_lookup] [DEBUG]- Exception while resolving variable 'name' in template 'unknown'.
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/core/handlers/exception.py", line 35, in inner
+    response = get_response(request)
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/core/handlers/base.py", line 113, in _get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/urls/resolvers.py", line 523, in resolve
+    raise Resolver404({'tried': tried, 'path': new_path})
+django.urls.exceptions.Resolver404: {'tried': [[<URLResolver <URLPattern list> (admin:admin) 'admin/'>], [<URLResolver <module 'wxapp.urls' from '/home/liroding/workspace/wxminiprogram_server/wxapp/urls.py'> (None:None) 'wxapp/'>]], 'path': ''}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 835, in _resolve_lookup
+    current = current[bit]
+TypeError: 'URLResolver' object is not subscriptable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 843, in _resolve_lookup
+    current = getattr(current, bit)
+AttributeError: 'URLResolver' object has no attribute 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 849, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 856, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [name] in <URLResolver <URLPattern list> (admin:admin) 'admin/'>
+2020-09-29 01:18:55,936 [Dummy-4:140024500209408] [django.template:878] [base:_resolve_lookup] [DEBUG]- Exception while resolving variable 'name' in template 'unknown'.
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/core/handlers/exception.py", line 35, in inner
+    response = get_response(request)
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/core/handlers/base.py", line 113, in _get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/urls/resolvers.py", line 523, in resolve
+    raise Resolver404({'tried': tried, 'path': new_path})
+django.urls.exceptions.Resolver404: {'tried': [[<URLResolver <URLPattern list> (admin:admin) 'admin/'>], [<URLResolver <module 'wxapp.urls' from '/home/liroding/workspace/wxminiprogram_server/wxapp/urls.py'> (None:None) 'wxapp/'>]], 'path': ''}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 835, in _resolve_lookup
+    current = current[bit]
+TypeError: 'URLResolver' object is not subscriptable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 843, in _resolve_lookup
+    current = getattr(current, bit)
+AttributeError: 'URLResolver' object has no attribute 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 849, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 856, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [name] in <URLResolver <module 'wxapp.urls' from '/home/liroding/workspace/wxminiprogram_server/wxapp/urls.py'> (None:None) 'wxapp/'>
+2020-09-29 05:37:00,968 [Dummy-5:140024372778752] [django.template:878] [base:_resolve_lookup] [DEBUG]- Exception while resolving variable 'name' in template 'unknown'.
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/core/handlers/exception.py", line 35, in inner
+    response = get_response(request)
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/core/handlers/base.py", line 113, in _get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/urls/resolvers.py", line 523, in resolve
+    raise Resolver404({'tried': tried, 'path': new_path})
+django.urls.exceptions.Resolver404: {'tried': [[<URLResolver <URLPattern list> (admin:admin) 'admin/'>], [<URLResolver <module 'wxapp.urls' from '/home/liroding/workspace/wxminiprogram_server/wxapp/urls.py'> (None:None) 'wxapp/'>]], 'path': ''}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 835, in _resolve_lookup
+    current = current[bit]
+TypeError: 'URLResolver' object is not subscriptable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 843, in _resolve_lookup
+    current = getattr(current, bit)
+AttributeError: 'URLResolver' object has no attribute 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 849, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 856, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [name] in <URLResolver <URLPattern list> (admin:admin) 'admin/'>
+2020-09-29 05:37:00,969 [Dummy-5:140024372778752] [django.template:878] [base:_resolve_lookup] [DEBUG]- Exception while resolving variable 'name' in template 'unknown'.
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/core/handlers/exception.py", line 35, in inner
+    response = get_response(request)
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/core/handlers/base.py", line 113, in _get_response
+    resolver_match = resolver.resolve(request.path_info)
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/urls/resolvers.py", line 523, in resolve
+    raise Resolver404({'tried': tried, 'path': new_path})
+django.urls.exceptions.Resolver404: {'tried': [[<URLResolver <URLPattern list> (admin:admin) 'admin/'>], [<URLResolver <module 'wxapp.urls' from '/home/liroding/workspace/wxminiprogram_server/wxapp/urls.py'> (None:None) 'wxapp/'>]], 'path': ''}
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 835, in _resolve_lookup
+    current = current[bit]
+TypeError: 'URLResolver' object is not subscriptable
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 843, in _resolve_lookup
+    current = getattr(current, bit)
+AttributeError: 'URLResolver' object has no attribute 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 849, in _resolve_lookup
+    current = current[int(bit)]
+ValueError: invalid literal for int() with base 10: 'name'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/liroding/.local/lib/python3.5/site-packages/django/template/base.py", line 856, in _resolve_lookup
+    (bit, current))  # missing attribute
+django.template.base.VariableDoesNotExist: Failed lookup for key [name] in <URLResolver <module 'wxapp.urls' from '/home/liroding/workspace/wxminiprogram_server/wxapp/urls.py'> (None:None) 'wxapp/'>
