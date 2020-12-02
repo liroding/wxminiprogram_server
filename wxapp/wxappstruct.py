@@ -13,7 +13,8 @@ from django.core.cache import cache
 logger = logging.getLogger('django')
 
 #error:ascii codec can't encode characters
-
+import codecs
+sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
 # wx test app
 #appid='wx0e09ec16b9a52aaf'
 #appsecret='0e972dcc055cd8f5c60d3fe12dbc822e'
@@ -48,6 +49,8 @@ def get_accesstoken():
     print(url_accesstoken)
     _dict = res.json()
     access_token = _dict['access_token'] #get session_key
+    localtime = time.asctime( time.localtime(time.time()) )
+    print("当前时间为：",localtime)
     print(access_token)
     cache.set('access_token',access_token)
 
@@ -87,8 +90,9 @@ def listfilename(home_dir,serverurl): #this function find the file under dir
                    if os.path.splitext(file)[1] == '.PNG':
                        filelist.append(os.path.join(serverurl,file))
         return filelist 
+
+
 class wxappstruct():
-    
     
     def testfunc(request):
         print('[server-log]: hello world !!!')
