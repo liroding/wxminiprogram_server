@@ -42,7 +42,8 @@ INSTALLED_APPS = [
 ]
 
 #two hours
-CRONJOBS = [('0 */1 * * *','wxapp.wxappstruct.get_accesstoken','>> /home/liroding/workspace/wxminiprogram_server/log/crontab.log')]
+CRONJOBS = [('0 */2 * * *','wxapp.wxappstruct.get_accesstoken','>> /opt/wxminiprogram_server/log/crontab.log')]
+#CRONJOBS = [('*/5 * * * *','wxapp.wxappstruct.get_accesstoken','>> /opt/wxminiprogram_server/log/crontab.log')]
 
 
 MIDDLEWARE = [
@@ -82,7 +83,7 @@ WSGI_APPLICATION = 'wxminiprogram.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_mysqldb',
+        'NAME': 'mysite_mysqldb',
 	'USER': 'root',
 	'PASSWORD': 'dingyinglai',
 	'HOST':'localhost',
@@ -140,7 +141,9 @@ LOGGING = {
  'disable_existing_loggers': True,
  'formatters': {#日志格式 
  'standard': {
-  'format': '%(asctime)s [%(threadName)s:%(thread)d] [%(name)s:%(lineno)d] [%(module)s:%(funcName)s] [%(levelname)s]- %(message)s'} 
+  'format': '%(asctime)s [%(threadName)s:%(thread)d] [%(name)s:%(lineno)d] [%(module)s:%(funcName)s] [%(levelname)s]- %(message)s'}, 
+ 'standard_A': {
+  'format': '%(asctime)s  [%(name)s:%(lineno)d] [%(module)s:%(funcName)s] [%(levelname)s]- %(message)s'} 
  },
  'filters': {#过滤器
  'require_debug_false': {
@@ -164,8 +167,9 @@ LOGGING = {
   'filename': os.path.join(BASE_DIR, "log",'debug.log'),#日志输出文件
   'maxBytes':1024*1024*5,#文件大小 
   'backupCount': 5,#备份份数
-  'formatter':'standard',#使用哪种formatters日志格式
+  'formatter':'standard_A',#使用哪种formatters日志格式
  },
+
  'console':{#输出到控制台
   'level': 'DEBUG',
   'class': 'logging.StreamHandler',
@@ -178,6 +182,12 @@ LOGGING = {
   'level': 'DEBUG',
   'propagate': True,
  },
+
+'django.db.backends': {
+  'handlers': ['debug'],
+  'propagate': True,
+  'level':'ERROR',
+},
  'django.request': {
   'handlers': ['debug','mail_admins'],
   'level': 'ERROR',
@@ -196,6 +206,6 @@ CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',  # 指定使用本地缓存
         'LOCATION': '/var/tmp/django_cache',
-        'TIMEOUT': None 
+        'TIMEOUT': None,
     }
 }

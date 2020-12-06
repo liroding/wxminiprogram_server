@@ -22,12 +22,16 @@ class usersmessagemysqldb(models.Model):
     telephone = models.CharField(max_length = 20,default='')
    
     #patient case
-    case1 = models.CharField(max_length = 50,default='')
-    case2 = models.CharField(max_length = 50,default='')
-    case3 = models.CharField(max_length = 50,default='')
-    case4 = models.CharField(max_length = 50,default='')
-    caseimg = models.CharField(max_length = 50,default='')
-    status = models.CharField(max_length = 10,default='0')
- #   status = models.IntegerField(default = '0')
+    #PE: physical examnination  case1-case4 caseimag
+    #PE_ST : ST->status
+    #PE_IMG : IMG-> image
+    PEA = models.CharField(max_length = 50,default='')
+    PEB = models.CharField(max_length = 50,default='')
+    PEC = models.CharField(max_length = 50,default='')
+    PED = models.CharField(max_length = 50,default='')
+    PEIMG = models.CharField(max_length = 50,default='')  #image
+    PEST = models.CharField(max_length = 10,default='0')  #status
     # def __str__(self):
     #    return 'username:'+ self.username
+    #诊断 imp
+    #处理 rx
