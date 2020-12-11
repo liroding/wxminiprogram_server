@@ -10,6 +10,7 @@ urlpatterns =[
       path('fileupload',wxappstruct.fileupload),
       path('querymysqldb',wxappstruct.querymysqldb),
       path('patientcasemesgsubmit',wxappstruct.patientcasehandle),
+      path('diagnoseresultsubmit',wxappstruct.diagnoseresulthandle),
       path('handlemysqltoxls',wxappstruct.handlecovertxls),
       path('wxsignature',wxappstruct.wxcheckSignature),
 ]

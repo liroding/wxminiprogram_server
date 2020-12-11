@@ -33,5 +33,13 @@ class usersmessagemysqldb(models.Model):
     PEST = models.CharField(max_length = 10,default='0')  #status
     # def __str__(self):
     #    return 'username:'+ self.username
-    #诊断 imp
+    #诊断 imp,会诊医师:consultant  医师:doctor  RA:result A
+    IMP_Doctor_RA = models.CharField(max_length = 50,default='')
+    IMP_Doctor_RB = models.CharField(max_length = 50,default='')
+    IMP_Doctor_RC = models.CharField(max_length = 50,default='')
+    
+    IMP_Consultant_RA = models.CharField(max_length = 50,default='')
+    IMP_Consultant_RB = models.CharField(max_length = 50,default='')
+    IMP_Consultant_RC = models.CharField(max_length = 50,default='')
+ #   IMPST = models.CharField(max_length = 10,default='0')  #status
     #处理 rx
