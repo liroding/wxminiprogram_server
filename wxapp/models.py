@@ -41,5 +41,8 @@ class usersmessagemysqldb(models.Model):
     IMP_Consultant_RA = models.CharField(max_length = 50,default='')
     IMP_Consultant_RB = models.CharField(max_length = 50,default='')
     IMP_Consultant_RC = models.CharField(max_length = 50,default='')
+    #方案
+    IMP_SCHEME = models.CharField(max_length = 5,default='')
+
  #   IMPST = models.CharField(max_length = 10,default='0')  #status
     #处理 rx

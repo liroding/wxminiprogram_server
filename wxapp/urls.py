@@ -13,5 +13,7 @@ urlpatterns =[
       path('diagnoseresultsubmit',wxappstruct.diagnoseresulthandle),
       path('handlemysqltoxls',wxappstruct.handlecovertxls),
       path('wxsignature',wxappstruct.wxcheckSignature),
+      path('patientscheme',wxappstruct.patientschemethandle),
+
 ]
  

@@ -367,78 +367,87 @@ class wxappstruct():
              if reqid == '1' or reqid == '2':  #doctor get all message from db
                 all_usersmessage = usersmessagemysqldb.objects.all()
                 #do logic demand handle
-                i = 0 
-                while i < len(all_usersmessage):
-                   status = int(all_usersmessage[i].PEST)      
+                index = 0 
+                while index < len(all_usersmessage):
+                   logger.debug('[server-log-p6] index = %d',index)
+                   status = int(all_usersmessage[index].PEST)      
                    status = status & 0x11
-                   logger.info('[server-log-p1]: status = %s', status)
+                   logger.debug('[server-log-p1]: status = %s', status)
                    if status != 0:
                      tmp = 0
                      if reqid == '1':
                         tmp = status & 0x1
-                        logger.info('[server-log-p2]: tmp = %s', tmp)
+                        logger.debug('[server-log-p2]: tmp = %d', tmp)
                         if tmp == 1:    
-                           all_usersmessage[i].PEST = int(all_usersmessage[i].PEST) & 0xfe #set PEST[0]=0,it means the doctor has checked it
+                           logger.info('[server-log-p4]')
+                           all_usersmessage[index].PEST = int(all_usersmessage[index].PEST) & 0xfe #set PEST[0]=0,it means the doctor has checked it
                         else:
+                           index = index + 1
                            continue
+                        logger.debug('[server-log-p5]')
                      elif reqid == '2':
                         tmp = status & 0x10
                         logger.info('[server-log-p3]: tmp = %s', tmp)
                         if tmp == 0x10:    
-                           all_usersmessage[i].PEST = int(all_usersmessage[i].PEST) & 0xef #set PEST[0]=0,it means the doctor has checked it
+                           all_usersmessage[index].PEST = int(all_usersmessage[index].PEST) & 0xef #set PEST[0]=0,it means the doctor has checked it
                         else:
+                           index = index + 1
                            continue
-                        name = all_usersmessage[i].name
-                        logger.info('[server-log]: name = %s', name)
-                        sex  = all_usersmessage[i].sex
-                        age  = all_usersmessage[i].age
-                        department =  all_usersmessage[i].department
-                        telephone = all_usersmessage[i].telephone
-                        #PE handle
-                        PEA =  all_usersmessage[i].PEA
-                        PEB =  all_usersmessage[i].PEB
-                        PEC =  all_usersmessage[i].PEC
-                        all_usersmessage[i].save()
+                     name = all_usersmessage[index].name
+                     logger.info('[server-log]: name = %s', name)
+                     sex  = all_usersmessage[index].sex
+                     age  = all_usersmessage[index].age
+                     department =  all_usersmessage[index].department
+                     telephone = all_usersmessage[index].telephone
+                     #此处为患者的authsession,为了后续的医师诊断使用
+                     patient_authsession = all_usersmessage[index].authsession
+                     #PE handle
+                     PEA =  all_usersmessage[index].PEA
+                     PEB =  all_usersmessage[index].PEB
+                     PEC =  all_usersmessage[index].PEC
+                     all_usersmessage[index].save()
 
-                        _ListPEA = PEA.strip(',').split(',')
-                        _ListPEB = PEB.strip(',').split(',')
-                        _ListPEC = PEC.strip(',').split(',')
-                        logger.debug('[server-log]: PEA_list = %s', _ListPEA)
-                        logger.debug('[server-log]: PEB_list = %s', _ListPEB)
-                        logger.debug('[server-log]: PEC_list = %s', _ListPEC)
-                        ###########################################
-                        _retPEAlist = [0 for x in range(0,4)]
-                        _retPEBlist = [0 for x in range(0,4)]
-                        _retPEClist = [0 for x in range(0,11)]
-                        ##########################################
-                        _nickname = all_usersmessage[i].nickname
-                        nickname = _nickname.encode('UTF-8')
-                        logger.debug('[server-debug]: the nickname %s',nickname)
-                        _homepath = PROJECT_ROOT + '/static/uploads/PEImages/' + all_usersmessage[i].nickname + '/'
-                        _serverurlpath = SERVER_URL + '/static/uploads/PEImages/' + all_usersmessage[i].nickname + '/'
-                        homepath = _homepath.encode('UTF-8')
-                        serverurlpath = _serverurlpath.encode('UTF-8')
-                        PEImglist = listfilename(homepath,serverurlpath)
-                        #PEA
-                        for i in range(len(_ListPEA)):
-                            for j in range(len(PEA_index)):
-                                if _ListPEA[i] == PEA_index[j]:
-                                   _retPEAlist[j] = 1
-                        #PEB
-                        for i in range(len(_ListPEB)):
-                            for j in range(len(PEB_index)):
-                                if _ListPEB[i] == PEB_index[j]:
-                                   _retPEBlist[j] = 1
-                        #PEC
-                        for i in range(len(_ListPEC)):
-                            for j in range(len(PEC_index)):
-                                if _ListPEC[i] == PEC_index[j]:
-                                   _retPEClist[j] = 1
-                        logger.debug('[server-debug]: tmp_PEAindex 1 conver = %s',_retPEAlist)
-                        logger.debug('[server-debug]: tmp_PEAindex 2 conver = %s',_retPEBlist)
-                        logger.debug('[server-debug]: tmp_PEAindex 3 conver = %s',_retPEClist)
-                        logger.info('[server-debug]: get the database data !!!')
-                        return JsonResponse({'authsession':authsession,'name':name,\
+                     _ListPEA = PEA.strip(',').split(',')
+                     _ListPEB = PEB.strip(',').split(',')
+                     _ListPEC = PEC.strip(',').split(',')
+                     logger.debug('[server-log]: PEA_list = %s', _ListPEA)
+                     logger.debug('[server-log]: PEB_list = %s', _ListPEB)
+                     logger.debug('[server-log]: PEC_list = %s', _ListPEC)
+                     ###########################################
+                     _retPEAlist = [0 for x in range(0,4)]
+                     _retPEBlist = [0 for x in range(0,4)]
+                     _retPEClist = [0 for x in range(0,11)]
+                     ##########################################
+                     _nickname = all_usersmessage[index].nickname
+                     nickname = _nickname.encode('UTF-8')
+                     logger.debug('[server-debug]: the nickname %s',nickname)
+                     _homepath = PROJECT_ROOT + '/static/uploads/PEImages/' + all_usersmessage[index].nickname + '/'
+                     _serverurlpath = SERVER_URL + '/static/uploads/PEImages/' + all_usersmessage[index].nickname + '/'
+                     homepath = _homepath.encode('UTF-8')
+                     serverurlpath = _serverurlpath.encode('UTF-8')
+                     PEImglist = listfilename(homepath,serverurlpath)
+                     #PEA
+                     for i in range(len(_ListPEA)):
+                         for j in range(len(PEA_index)):
+                             if _ListPEA[i] == PEA_index[j]:
+                                _retPEAlist[j] = 1
+                     #PEB
+                     for i in range(len(_ListPEB)):
+                         for j in range(len(PEB_index)):
+                             if _ListPEB[i] == PEB_index[j]:
+                                _retPEBlist[j] = 1
+                     #PEC
+                     for i in range(len(_ListPEC)):
+                         for j in range(len(PEC_index)):
+                             if _ListPEC[i] == PEC_index[j]:
+                                _retPEClist[j] = 1
+                     logger.debug('[server-debug]: tmp_PEAindex 1 conver = %s',_retPEAlist)
+                     logger.debug('[server-debug]: tmp_PEAindex 2 conver = %s',_retPEBlist)
+                     logger.debug('[server-debug]: tmp_PEAindex 3 conver = %s',_retPEClist)
+                     logger.info('[server-debug]: get the database data !!!')
+                     #此次返回的authsession是患者的authsession,为了后续医师填写
+                     #诊断结果准备
+                     return JsonResponse({'authsession':patient_authsession,'name':name,\
                                              'sex':sex,'age':age,'department':department, \
                                              'telephone':telephone,  \
                                              'PEA':_retPEAlist,  \
@@ -446,11 +455,32 @@ class wxappstruct():
                                              'PEC':_retPEClist,  \
                                              'PEImglist':PEImglist \
                                        })
-                   i = i + 1
-                
+                   index = index + 1
                 logger.info('[server-debug]: this is last handle dbcase !!!')
-                return HttpResponse('no other match dbcase')
+                #如果查不多患者者信息，则authsession返回null,代表无
+                return JsonResponse({'authsession':null})
+             if reqid == '3':  #doctor diagnosis result get all message from db
+                all_usersmessage = usersmessagemysqldb.objects.all()
+                #do logic demand handle
+                i = 0 
+                while i < len(all_usersmessage):
+                    i = index
+                    hascheckflag = int(all_usersmessage[index].PEST) & 0x02 #set PEST[1]=1,it means the doctor has checked it
+                    if hascheckflag == 0x2:
+                       IMP_RA =  all_usersmessage[index].IMP_Doctor_RA
+                       IMP_RB =  all_usersmessage[index].IMP_Doctor_RB
+                       IMP_RC =  all_usersmessage[index].IMP_Doctor_RC
 
+                       return JsonResponse({ \
+                                             'IMP_RA':IMP_RA,  \
+                                             'IMP_RB':IMP_RB,  \
+                                             'IMP_RC':IMP_RC,  \
+                                    })
+
+                    else:
+                       return HttpResponse('has not be checked')
+
+                    break
 #--------------------------------------------------
 # Handle PEx Post Data,Storage to db
 # PEST     7    6    5      4       3      2    1    0
@@ -508,10 +538,10 @@ class wxappstruct():
         _dictret = checkauthsession(authsession)
         has_authsession = _dictret['matchflag']
         
-        DiagnoseResult_1  = request.POST['DiagnoseResult_1']
-        DiagnoseResult_2  = request.POST['DiagnoseResult_2']
-        DiagnoseResult_3  = request.POST['DiagnoseResult_3']
-        DiagnoseResult_4  = request.POST['DiagnoseResult_4']
+        IMP_RA = request.POST['IMP_RA']
+        IMP_RB = request.POST['IMP_RB']
+        IMP_RC = request.POST['IMP_RC']
+        IMP_SCHEME = request.POST['IMP_SCHEME']
         checkerdoctorid  = request.POST['checkerdoctorid']
       
         if has_authsession == 0:
@@ -528,15 +558,16 @@ class wxappstruct():
                   while i < len(all_usersmessage):
                       i = index
                       #do logic demand handle
-                      all_usersmessage[i].IMP_Doctor_RA = DiagnoseResult_1 
-                      all_usersmessage[i].IMP_Doctor_RB = DiagnoseResult_2 
-                      all_usersmessage[i].IMP_Doctor_RC = DiagnoseResult_3 
+                      all_usersmessage[i].IMP_Doctor_RA = IMP_RA 
+                      all_usersmessage[i].IMP_Doctor_RB = IMP_RB 
+                      all_usersmessage[i].IMP_Doctor_RC = IMP_RC 
+                      all_usersmessage[i].IMP_SCHEME = IMP_SCHEME
                       all_usersmessage[i].PEST = int(all_usersmessage[i].PEST) | 0x2 
                       logger.debug('[server-log]: status = %d',int(all_usersmessage[index].PEST))
                       all_usersmessage[i].save()
                       return HttpResponse('doctor result')
                   logger.debug('[server-log]: result_1 = %s,result_2 = %s',  \
-                DiagnoseResult_1,DiagnoseResult_2)
+                IMP_RA,IMP_RB)
              elif checkerdoctorid == 'consultants':
                   index = _dictret['matchdbid'] 
                   logger.debug('[server-log]: index = %d',index)
@@ -547,16 +578,46 @@ class wxappstruct():
                   while i < len(all_usersmessage):
                       i = index
                       #do logic demand handle
-                      all_usersmessage[i].IMP_Consultant_RA = DiagnoseResult_1 
-                      all_usersmessage[i].IMP_Consultant_RB = DiagnoseResult_2 
-                      all_usersmessage[i].IMP_Consultant_RC = DiagnoseResult_3 
+                      all_usersmessage[i].IMP_Consultant_RA = IMP_RA 
+                      all_usersmessage[i].IMP_Consultant_RB = IMP_RB
+                      all_usersmessage[i].IMP_Consultant_RC = IMP_RC 
                       all_usersmessage[i].PEST = int(all_usersmessage[i].PEST) | 0x20 
                       logger.debug('[server-log]: status = %d',int(all_usersmessage[index].PEST))
                       all_usersmessage[i].save()
                       return HttpResponse('consultant result')
                   logger.debug('[server-log-1]: result_1 = %s,result_2 = %s',  \
-                DiagnoseResult_1,DiagnoseResult_2)
+                IMP_RA,IMP_RB)
         return HttpResponse('result')
+#--------------------------------------------------
+# 患者方案处理
+# 依据医生诊断结果自动分析提供方案或者使用医生直接提供的方案
+# reqid = 1 :doctor check patient PE Info to handle
+# PEST     7    6    5      4       3      2    1    0
+#         保留|保留|会诊师已给出诊断|病历更新|保留|保留|医师已给出诊断|病历更新     
+# schemeid  0:暂无治疗方案 1:schemeA   2:schemeB   3:schemeC
+#-------------------------------------------------
+    def patientschemethandle(request):
+       
+        authsession = request.POST['authsession']
+        _dictret = checkauthsession(authsession)
+        has_authsession = _dictret['matchflag']
+        
+        if has_authsession == 0:
+             return HttpResponse('Authsession no match')
+        else:
+             logger.info('[server-log]: authsession pass !!!')
+             index = _dictret['matchdbid'] 
+             logger.debug('[server-log]: index = %d',index)
+             all_usersmessage = usersmessagemysqldb.objects.all()
+             i = 0
+             while i <= len(all_usersmessage):
+                 i = index
+                 #do logic demand handle
+                 schemeid = all_usersmessage[i].IMP_SCHEME
+                 break
+             return JsonResponse({\
+                                             'schemeid':schemeid,  \
+                                       })
 
 #--------------------------------------------------
 # Convert DB to xls format
