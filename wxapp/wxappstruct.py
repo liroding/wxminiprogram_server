@@ -66,6 +66,7 @@ def checkauthsession(authsessioncode):
         has_authsession = 0
         authsession = authsessioncode
         if(authsession):
+            logger.info('[server-log]: p1')
             all_usersmessage = usersmessagemysqldb.objects.all()
             #to find whether db have authsession
             i = 0
@@ -84,7 +85,8 @@ def checkauthsession(authsessioncode):
                 logger.info('[server-log]: authsession no  match !!!')
                 return retarg   #no match
         else:
-            return HttpResponse('attach authsession is null !!!')
+            logger.info('[server-log]: p2')
+            return retarg
 
 #-------------------------------------------------
 # this function is to get value base of input key
@@ -98,16 +100,29 @@ def getkeyvalue(authsessioncode,argid): #1:nickname
         while i < len(all_usersmessage):
                 if authsession in all_usersmessage[i].authsession:   
                      if argid == 1:
-                         return all_usersmessage[i].nickname
+                         _nickname = all_usersmessage[i].nickname
+                         #return _nickname.encode('UTF-8')
+                         return _nickname
                 i +=1
+#home_dir & serverurl format is bytes: b'--'
+#由于home_dir 中包括中文字符，所以上一层被转化成了bytes
+#因此后续的处理，需要安装需求进行string 和bytes的相互转换
+#string = bytes.decode(bytes_formate)
+#bytes  = string.encode('UTF-8')
 def listfilename(home_dir,serverurl): #this function find the file under dir
         filelist = []
         logger.info('[server-log]: serverurl = %s',serverurl)
+        logger.info('[server-log]: home_dir = %s',home_dir)
         for root,dirs,files in os.walk(home_dir):
                for file in files:
-                   if os.path.splitext(file)[1] == '.PNG':
-                       filelist.append(os.path.join(serverurl,file))
-        return filelist 
+                   logger.info('[server-log]: file = %s',file)
+                   logger.info('[server-log]: file_1 = %s',os.path.splitext(file)[1] )
+                   # 
+                   if os.path.splitext(file)[1] == b".PNG":
+                       logger.info('[server-log]: file_1 = %s',os.path.splitext(file)[1] )
+                       filelist.append(os.path.join(bytes.decode(serverurl),bytes.decode(file)))
+                       logger.info('[server-log]: filelist = %s',str(filelist))
+        return filelist
 
 
 class wxappstruct():
@@ -323,7 +338,7 @@ class wxappstruct():
             else:
                 uploadid = request.POST['uploadid']
                 logger.debug('[server-log]: upload img id = %s',uploadid )
-                if   uploadid == '3':
+                if   uploadid == '1':
                      casepicid = request.POST['casepicid']
                      image_file = request.FILES.get('file')
                      nowtime = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime()) 
@@ -332,13 +347,16 @@ class wxappstruct():
                     # print(sys.getdefaultencoding())
                      #storage case imgs to server
                      nickname = getkeyvalue(authsession,1) #1:nickname
-                     logger.debug('[server-log]: nickname = %s',nickname)
-                     path = PROJECT_ROOT + '/static/uploads/PEImags/' + nickname + '/' #django env
+                     #logger.debug('[server-log]: nickname = %s',nickname)
+                     _path = PROJECT_ROOT + '/static/uploads/PEImages/' + nickname + '/' #django env
+                     path = _path.encode('UTF-8')
                      logger.debug('[server-log]: upload file path = %s' , path)
                      
                      if not os.path.exists(path):
                           os.makedirs(path)
-                     with open(path + filename + '.PNG','wb+') as destination:
+                     _pngname = _path + filename + '.PNG'
+                     pngname = _pngname.encode('UTF-8')
+                     with open( pngname ,'wb+') as destination:
                           for chunk in image_file.chunks():
                                destination.write(chunk)
 
@@ -426,6 +444,7 @@ class wxappstruct():
                      homepath = _homepath.encode('UTF-8')
                      serverurlpath = _serverurlpath.encode('UTF-8')
                      PEImglist = listfilename(homepath,serverurlpath)
+                     logger.debug('[server-debug-1111]: the nickname %s',PEImglist)
                      #PEA
                      for i in range(len(_ListPEA)):
                          for j in range(len(PEA_index)):
@@ -458,7 +477,7 @@ class wxappstruct():
                    index = index + 1
                 logger.info('[server-debug]: this is last handle dbcase !!!')
                 #如果查不多患者者信息，则authsession返回null,代表无
-                return JsonResponse({'authsession':null})
+                return JsonResponse({'authsession':None})
              if reqid == '3':  #doctor diagnosis result get all message from db
                 all_usersmessage = usersmessagemysqldb.objects.all()
                 #do logic demand handle
