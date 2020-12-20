@@ -359,6 +359,25 @@ class wxappstruct():
                      with open( pngname ,'wb+') as destination:
                           for chunk in image_file.chunks():
                                destination.write(chunk)
+                #用户提交附带材料
+                if   uploadid == '2':
+                     image_file = request.FILES.get('file')
+                     nowtime = time.strftime("%Y-%m-%d %H:%M:%S",time.localtime()) 
+                     filename = nowtime + '_'
+                     #storage case imgs to server
+                     nickname = getkeyvalue(authsession,1) #1:nickname
+                     #logger.debug('[server-log]: nickname = %s',nickname)
+                     _path = PROJECT_ROOT + '/static/uploads/PEImages/' + nickname + '/' #django env
+                     path = _path.encode('UTF-8')
+                     logger.debug('[server-log]: upload file path = %s' , path)
+                     
+                     if not os.path.exists(path):
+                          os.makedirs(path)
+                     _pngname = _path + filename + '.PNG'
+                     pngname = _pngname.encode('UTF-8')
+                     with open( pngname ,'wb+') as destination:
+                          for chunk in image_file.chunks():
+                               destination.write(chunk)
 
         else:
             return HttpResponse('server cannot handle GET request !!!!')

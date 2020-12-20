@@ -27,8 +27,8 @@ class usersmessagemysqldb(models.Model):
     #PE_IMG : IMG-> image
     PEA = models.CharField(max_length = 50,default='')
     PEB = models.CharField(max_length = 50,default='')
-    PEC = models.CharField(max_length = 50,default='')
-    PED = models.CharField(max_length = 50,default='')
+    PEC = models.CharField(max_length = 80,default='')
+    PED = models.CharField(max_length = 20,default='')
     PEIMG = models.CharField(max_length = 50,default='')  #image
     PEST = models.CharField(max_length = 10,default='0')  #status
     # def __str__(self):
