@@ -275,7 +275,7 @@ class wxappstruct():
 #--------------------------------------------------
 # user submit same their idmessage
 # PEST     7    6    5      4       3      2    1    0
-#         保留|保留|会诊师已给出诊断|病历更新|保留|保留|医师已给出诊断|病历更新     
+#         保留|保留|会诊师已给出诊断|病历更新|病例信息已填|个人信息已填|医师已给出诊断|病历更新     
 #-------------------------------------------------
 
     def idmessagehandle(request):
@@ -313,11 +313,11 @@ class wxappstruct():
                      all_usersmessage[index].telephone = telephone
                      logger.debug('[server-log]: name = %s',all_usersmessage[index].name)
                      logger.debug('[server-log]: status = %d',int(all_usersmessage[index].PEST))
-                     all_usersmessage[index].PEST = int(all_usersmessage[index].PEST) | 0x1 
+                     all_usersmessage[index].PEST = int(all_usersmessage[index].PEST) | 0x4
                      all_usersmessage[index].save()
                      logger.info('[server-log]: update the database finish !!!')
                      break
-                return HttpResponse('Sever has update the database !')
+                return HttpResponse('Sever has update the database!')
 
 
         return HttpResponse('attach authsession is null !!!')
@@ -385,8 +385,12 @@ class wxappstruct():
         return HttpResponse('file upload success !!!')
 #--------------------------------------------------
 # reqid = 1 :doctor check patient PE Info to handle
+# reqid = 2 :Consultant check patient PE Info to handle
+# reqid = 3 :user get doctor diagnosis result  from db
+# reqid = 4 :user get idmessage from db
+# reqid = 5 :user get PE Info from db
 # PEST     7    6    5      4       3      2    1    0
-#         保留|保留|会诊师已给出诊断|病历更新|保留|保留|医师已给出诊断|病历更新     
+#         保留|保留|会诊师已给出诊断|病历更新|病例信息已填|个人信息已填|医师已给出诊断|病历更新     
 #-------------------------------------------------
     def querymysqldb(request):
        
@@ -426,7 +430,7 @@ class wxappstruct():
                         tmp = status & 0x10
                         logger.info('[server-log-p3]: tmp = %s', tmp)
                         if tmp == 0x10:    
-                           all_usersmessage[index].PEST = int(all_usersmessage[index].PEST) & 0xef #set PEST[0]=0,it means the doctor has checked it
+                           all_usersmessage[index].PEST = int(all_usersmessage[index].PEST) & 0xef #set PEST[0]=0,it means the Consultant  has checked it
                         else:
                            index = index + 1
                            continue
@@ -514,15 +518,80 @@ class wxappstruct():
                                              'IMP_RB':IMP_RB,  \
                                              'IMP_RC':IMP_RC,  \
                                     })
-
                     else:
                        return HttpResponse('has not be checked')
-
                     break
+             if reqid == '4':  #get idmessage from db
+                logger.info('[server-debug]: get idmessage from db !!!')
+                all_usersmessage = usersmessagemysqldb.objects.all()
+                #do logic demand handle
+                i = 0 
+                while i < len(all_usersmessage):
+                    i = index
+                    haswriteflag = int(all_usersmessage[index].PEST) & 0x04 #if PEST[2]=1,it means idmessage has be writen 
+                    if haswriteflag == 0x4:
+                       _name = all_usersmessage[i].name
+                       _sex  = all_usersmessage[i].sex
+                       _age  = all_usersmessage[i].age
+                       _department = all_usersmessage[i].department
+                       _telephone = all_usersmessage[i].telephone 
+                       return JsonResponse({ \
+                                             'name':_name,  \
+                                             'sex':_sex,  \
+                                             'age':_age,  \
+                                             'department':_department,  \
+                                             'telephone':_telephone,  \
+                                    })
+                    else:
+                       return HttpResponse('has not be writen')
+             if reqid == '5':  #get PE info  from db
+                logger.info('[server-debug]: get PE info from db !!!')
+                all_usersmessage = usersmessagemysqldb.objects.all()
+                #do logic demand handle
+                i = 0 
+                while i < len(all_usersmessage):
+                    i = index
+                    haswriteflag = int(all_usersmessage[index].PEST) & 0x08 #if PEST[0]=1,it means PE Info has be writen 
+                    if haswriteflag == 0x8:
+                       #PE handle
+                       PEA =  all_usersmessage[index].PEA
+                       PEB =  all_usersmessage[index].PEB
+                       PEC =  all_usersmessage[index].PEC
+                       _ListPEA = PEA.strip(',').split(',')
+                       _ListPEB = PEB.strip(',').split(',')
+                       _ListPEC = PEC.strip(',').split(',')
+                       logger.debug('[server-log]: PEA_list = %s', _ListPEA)
+                       logger.debug('[server-log]: PEB_list = %s', _ListPEB)
+                       logger.debug('[server-log]: PEC_list = %s', _ListPEC)
+                     ###########################################
+                       _retPEAlist = [0 for x in range(0,4)]
+                       _retPEBlist = [0 for x in range(0,4)]
+                       _retPEClist = [0 for x in range(0,11)]
+                       for i in range(len(_ListPEA)):
+                           for j in range(len(PEA_index)):
+                               if _ListPEA[i] == PEA_index[j]:
+                                  _retPEAlist[j] = 1
+                       #PEB
+                       for i in range(len(_ListPEB)):
+                           for j in range(len(PEB_index)):
+                               if _ListPEB[i] == PEB_index[j]:
+                                  _retPEBlist[j] = 1
+                       #PEC
+                       for i in range(len(_ListPEC)):
+                           for j in range(len(PEC_index)):
+                               if _ListPEC[i] == PEC_index[j]:
+                                  _retPEClist[j] = 1
+                       return JsonResponse({ \
+                                             'PEA':_retPEAlist,  \
+                                             'PEB':_retPEBlist,  \
+                                             'PEC':_retPEClist,  \
+                                    })
+                    else:
+                       return HttpResponse('has not be writen')
 #--------------------------------------------------
 # Handle PEx Post Data,Storage to db
 # PEST     7    6    5      4       3      2    1    0
-#         保留|保留|会诊师已给出诊断|病历更新|保留|保留|医师已给出诊断|病历更新     
+#         保留|保留|会诊师已给出诊断|病历更新|病例信息已填|个人信息已填|医师已给出诊断|病历更新     
 #-------------------------------------------------
     def patientcasehandle(request):
         logger.info('[server-log]:enter patient case handle')
@@ -558,17 +627,18 @@ class wxappstruct():
                     all_usersmessage[i].PEA = PEA_Data
                     all_usersmessage[i].PEB = PEB_Data
                     all_usersmessage[i].PEC = PEC_Data
-                    all_usersmessage[i].PEST = int(all_usersmessage[i].PEST) | 0x1 
-                    all_usersmessage[i].PEST = int(all_usersmessage[i].PEST) | 0x10 
+                    # write PEST[0] = 1 PEST[3] = 1 PEST[4] = 1 PEST[7] = 1
+                    all_usersmessage[i].PEST = int(all_usersmessage[i].PEST) | 0x9 
+                    all_usersmessage[i].PEST = int(all_usersmessage[i].PEST) | 0x90 
                     logger.debug('[server-log]: status = %d',int(all_usersmessage[index].PEST))
                     all_usersmessage[i].save()
                     logger.info('[server-log]: update the database finish !!!')
-                    return HttpResponse('Sever has update the database !')
+                    return HttpResponse('Sever has update the database!')
 
 #--------------------------------------------------
-# reqid = 1 :doctor check patient PE Info to handle
+# reqid = 1 :doctor check patient PE Info to handler
 # PEST     7    6    5      4       3      2    1    0
-#         保留|保留|会诊师已给出诊断|病历更新|保留|保留|医师已给出诊断|病历更新     
+#         保留|保留|会诊师已给出诊断|病历更新|病例信息已填|个人信息已填|医师已给出诊断|病历更新     
 #-------------------------------------------------
     def diagnoseresulthandle(request):
        
