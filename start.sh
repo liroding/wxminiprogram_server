@@ -1,3 +1,3 @@
 #!/bin/bash
-python3 /home/liroding/workspace/wxminiprogram_server/manage.py runserver 0.0.0.0:8000
+python3 /opt/wxminiprogram_server/manage.py runserver 0.0.0.0:8080
 echo "启动成功"
