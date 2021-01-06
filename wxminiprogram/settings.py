@@ -198,6 +198,15 @@ LOGGING = {
   'handlers': ['null'],
   'propagate': False,
  },
+
+ 'django.template':{
+   'handlers':['null'],
+   'level':'INFO',
+   'propagate':True,
+ },
+
+
+
  } 
 }
 
